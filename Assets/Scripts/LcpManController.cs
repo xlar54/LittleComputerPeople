@@ -30,7 +30,9 @@ public class LcpManController : MonoBehaviour {
         BuildFire,
         Cupboard,
         Toilet,
-        ReadBook
+        ReadBook,
+        Exercise,
+        Phone
     }
     public enum CharacterStates
     {
@@ -68,40 +70,7 @@ public class LcpManController : MonoBehaviour {
 
     private void Update()
     {
-        if (Input.GetKeyDown("v"))
-        {
-            activityQueue.Push(Activities.TV);
-        }
-
-        if (Input.GetKeyDown("s"))
-        {
-            activityQueue.Push(Activities.Sleep);
-        }
-
-        if (Input.GetKeyDown("t"))
-        {
-            activityQueue.Push(Activities.Toilet);
-        }
-
-        if (Input.GetKeyDown("b"))
-        {
-            activityQueue.Push(Activities.ReadBook);
-        }
-        if (Input.GetKeyDown("w"))
-        {
-            activityQueue.Push(Activities.Typewriter);
-        }
-
-
-        if (Input.GetKeyDown("a"))
-        {
-            GameObject.Find("Alarm_clock").GetComponent<AudioSource>().Play();
-            if(currentActivity == Activities.Sleep)
-            {
-                activityQueue.Push(Activities.Toilet);
-                FinishedActivity(currentActivity);
-            }
-        }
+        HandleInput();
 
         if (state == CharacterStates.idle)
         {
@@ -126,6 +95,65 @@ public class LcpManController : MonoBehaviour {
 
     }
 
+    private void HandleInput()
+    {
+        if (Input.GetKeyDown("v"))
+        {
+            activityQueue.Push(Activities.TV);
+        }
+
+        if (Input.GetKeyDown("s"))
+        {
+            activityQueue.Push(Activities.Sleep);
+        }
+
+        if (Input.GetKeyDown("t"))
+        {
+            activityQueue.Push(Activities.Toilet);
+        }
+
+        if (Input.GetKeyDown("b"))
+        {
+            activityQueue.Push(Activities.ReadBook);
+        }
+        if (Input.GetKeyDown("w"))
+        {
+            activityQueue.Push(Activities.Typewriter);
+        }
+
+        if (Input.GetKeyDown("e"))
+        {
+            activityQueue.Push(Activities.Exercise);
+        }
+
+        if (Input.GetKeyDown("f"))
+        {
+            activityQueue.Push(Activities.Cupboard);
+        }
+
+
+        if (Input.GetKeyDown("a"))
+        {
+            GameObject.Find("Alarm_clock").GetComponent<AudioSource>().Play();
+            if (currentActivity == Activities.Sleep)
+            {
+                activityQueue.Push(Activities.Toilet);
+                FinishedActivity(currentActivity);
+            }
+        }
+
+        if (Input.GetKeyDown("c"))
+        {
+            GameObject.Find("Phone_Base").GetComponent<PhoneController>().state = PhoneController.States.ringing;
+            activityQueue.Push(Activities.Phone);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
+    }
+
     void GoToActivity(Activities activity)
     {
         if (activity == Activities.TV)
@@ -141,7 +169,7 @@ public class LcpManController : MonoBehaviour {
             StartWalk(2, new Vector3(-4.78f, 5.41f, 2.62f), Movement.FacingDirection.forward, 3);
 
         if (activity == Activities.KitchenTable)
-            StartWalk(1, new Vector3(3.66f, 2.27f, 1.75f), Movement.FacingDirection.forward, 5);
+            StartWalk(1, new Vector3(3.66f, 2.27f, 1.75f), Movement.FacingDirection.forward, 10);
 
         if (activity == Activities.ComputerDesk)
             StartWalk(2, new Vector3(-6.04f, 5.32f, 1.64f), Movement.FacingDirection.backward, 20);
@@ -184,12 +212,21 @@ public class LcpManController : MonoBehaviour {
 
         if (activity == Activities.ReadBook)
             StartWalk(2, new Vector3(-4.249f, 5.392f, 1.43f), Movement.FacingDirection.backward, 1);
+
+        if (activity == Activities.Exercise)
+            StartWalk(2, new Vector3(5.77f, 5.392f, 2.17f), Movement.FacingDirection.forward, 10);
+
+        if (activity == Activities.Phone)
+            StartWalk(1, new Vector3(-2.62f, 1.94f, 0.883f), Movement.FacingDirection.forward, 10);
             
+
 
     }
 
     void StartActivity(Activities activity)
     {
+        StopAltSound();
+
         if (currentActivity == Activities.Shower)
         {
             GameObject.Find("Shower").GetComponent<ParticleSystem>().Play();
@@ -227,9 +264,24 @@ public class LcpManController : MonoBehaviour {
             characterModel.GetComponent<Animator>().SetBool("isSitting", true);
         }
 
+        if (currentActivity == Activities.Phone)
+        {
+            GameObject.Find("Phone_Handset").GetComponent<MeshRenderer>().enabled = false;
+            GameObject.Find("Phone_Base").GetComponent<PhoneController>().state = PhoneController.States.normal;
+            PlaySound("speak1", true);
+            GameObject.Find("Phone").GetComponent<MeshRenderer>().enabled = true;
+            characterModel.GetComponent<Animator>().SetBool("isUsingPhone", true);
+        }
+
         if (currentActivity == Activities.BuildFire || currentActivity == Activities.TV)
         {
             characterModel.GetComponent<Animator>().SetBool("isBending", true);
+        }
+
+        if (currentActivity == Activities.Exercise)
+        {
+            PlaySound("exercise", true);
+            characterModel.GetComponent<Animator>().SetBool("isExercising", true);
         }
 
         if (currentActivity == Activities.Cupboard || currentActivity == Activities.ComputerDesk 
@@ -240,6 +292,7 @@ public class LcpManController : MonoBehaviour {
 
         if (currentActivity == Activities.KitchenTable)
         {
+            PlaySound("eating", true);
             characterModel.GetComponent<Animator>().SetBool("isEating", true);
         }
 
@@ -331,6 +384,7 @@ public class LcpManController : MonoBehaviour {
         characterModel.GetComponent<Animator>().SetBool("isBending", false);
         characterModel.GetComponent<Animator>().SetBool("isDoing", false);
         characterModel.GetComponent<Animator>().SetBool("isEating", false);
+        characterModel.GetComponent<Animator>().SetBool("isExercising", false);
 
         if (activity == Activities.Sleep)
         {
@@ -390,6 +444,13 @@ public class LcpManController : MonoBehaviour {
         {
             GameObject.Find("Panel").transform.position = new Vector3(0, 0, 0);
         }
+
+        if (currentActivity == Activities.Phone)
+        {
+            GameObject.Find("Phone_Handset").GetComponent<MeshRenderer>().enabled = true;
+            GameObject.Find("Phone").GetComponent<MeshRenderer>().enabled = false;
+            characterModel.GetComponent<Animator>().SetBool("isUsingPhone", false);
+        }
     }
 
     Activities GetNextActivity()
@@ -406,7 +467,7 @@ public class LcpManController : MonoBehaviour {
             return Activities.Sleep;
         }
 
-        int nextActivity = UnityEngine.Random.Range(1, 20);
+        int nextActivity = UnityEngine.Random.Range(1, 22);
 
         switch (nextActivity)
         {
@@ -429,6 +490,8 @@ public class LcpManController : MonoBehaviour {
             case 17: return Activities.Cupboard;
             case 18: return Activities.Toilet;
             case 19: return Activities.ReadBook;
+            case 20: return Activities.Exercise;
+            case 21: return Activities.Phone;
         }
 
         return Activities.FrontDoor;
@@ -436,6 +499,8 @@ public class LcpManController : MonoBehaviour {
 
     void StartWalk(int floor, Vector3 location, Movement.FacingDirection facing, int timeToStay)
     {
+        StartAltSound("walk", true);
+
         List<Vector3> waypoints = MoveBetweenFloors(currentFloor, floor);
         waypoints.Add(location);
         path = new Movement(waypoints, facing, floor, timeToStay);
@@ -558,6 +623,26 @@ public class LcpManController : MonoBehaviour {
             lastSound = sound;
         }
 
+    }
+
+    void StopSound()
+    {
+        GetComponent<AudioSource>().Stop();
+    }
+
+    void StartAltSound(string sound, bool loop)
+    {
+        AudioSource go = GameObject.Find("GameObject").GetComponent<AudioSource>();
+        AudioClip clip = Resources.Load<AudioClip>(sound);
+        go.loop = loop;
+        go.clip = clip;
+        go.Play();
+    }
+
+    void StopAltSound()
+    {
+        AudioSource go = GameObject.Find("GameObject").GetComponent<AudioSource>();
+        go.Stop();
     }
 
     IEnumerator BlinkCoroutine()

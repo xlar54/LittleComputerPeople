@@ -102,6 +102,9 @@ ModelImporter:
     100188: Cylinder
     100190: Food
     100192: Plate
+    100194: Cylinder_001
+    100196: Phone_Base
+    100198: Phone_Handset
     400000: Attic_door
     400002: BackWall
     400004: Bathroom_floor
@@ -199,6 +202,9 @@ ModelImporter:
     400188: Cylinder
     400190: Food
     400192: Plate
+    400194: Cylinder_001
+    400196: Phone_Base
+    400198: Phone_Handset
     2300000: Attic_door
     2300002: BackWall
     2300004: Bathroom_floor
@@ -295,6 +301,9 @@ ModelImporter:
     2300186: Cylinder
     2300188: Food
     2300190: Plate
+    2300192: Cylinder_001
+    2300194: Phone_Base
+    2300196: Phone_Handset
     3300000: Attic_door
     3300002: BackWall
     3300004: Bathroom_floor
@@ -391,6 +400,9 @@ ModelImporter:
     3300186: Cylinder
     3300188: Food
     3300190: Plate
+    3300192: Cylinder_001
+    3300194: Phone_Base
+    3300196: Phone_Handset
     4300000: Refrigerator_handle_002
     4300002: Refrigerator_handle_001
     4300004: Bathroom_toilet_door_knob
@@ -487,6 +499,9 @@ ModelImporter:
     4300186: Cylinder
     4300188: Food
     4300190: Plate
+    4300192: Phone_Base
+    4300194: Cylinder_001
+    4300196: Phone_Handset
     7400000: Default Take
     9500000: //RootNode
   materials:
