@@ -48,7 +48,7 @@ public class LcpManController : MonoBehaviour {
     public Activities currentActivity;
 
     public CharacterStates state;
-    private Movement path;
+    private Path path;
     private string lastSound = "";
 
     private Vector3 tempVec1;
@@ -99,7 +99,7 @@ public class LcpManController : MonoBehaviour {
     {
         if (Input.GetKeyDown("v"))
         {
-            activityQueue.Push(Activities.TV);
+            activityQueue.Push(Activities.TVChair);
         }
 
         if (Input.GetKeyDown("s"))
@@ -157,67 +157,67 @@ public class LcpManController : MonoBehaviour {
     void GoToActivity(Activities activity)
     {
         if (activity == Activities.TV)
-            StartWalk(3, new Vector3(6.67f, 8.7f, 2.41f), Movement.FacingDirection.right, 1);
+            StartWalk(3, new Vector3(6.67f, 8.7f, 2.41f), Path.FacingDirection.right, 1);
 
         if (activity == Activities.BathroomSink)
-            StartWalk(2, new Vector3(0.65f, 5.55f, 2.41f), Movement.FacingDirection.backward, 4);
+            StartWalk(2, new Vector3(0.65f, 5.55f, 2.41f), Path.FacingDirection.backward, 4);
 
         if (activity == Activities.Stove)
-            StartWalk(1, new Vector3(8.05f, 2.12f, 2.41f), Movement.FacingDirection.right, 4);
+            StartWalk(1, new Vector3(8.05f, 2.12f, 2.41f), Path.FacingDirection.right, 4);
 
         if (activity == Activities.ComputerRoom)
-            StartWalk(2, new Vector3(-4.78f, 5.41f, 2.62f), Movement.FacingDirection.forward, 3);
+            StartWalk(2, new Vector3(-4.78f, 5.41f, 2.62f), Path.FacingDirection.forward, 3);
 
         if (activity == Activities.KitchenTable)
-            StartWalk(1, new Vector3(3.66f, 2.27f, 1.75f), Movement.FacingDirection.forward, 10);
+            StartWalk(1, new Vector3(3.66f, 2.27f, 1.75f), Path.FacingDirection.forward, 10);
 
         if (activity == Activities.ComputerDesk)
-            StartWalk(2, new Vector3(-6.04f, 5.32f, 1.64f), Movement.FacingDirection.backward, 20);
+            StartWalk(2, new Vector3(-6.04f, 5.32f, 1.64f), Path.FacingDirection.backward, 20);
 
         if (activity == Activities.Shower)
-            StartWalk(2, new Vector3(-2.39f, 5.32f, 0.86f), Movement.FacingDirection.left, 8);
+            StartWalk(2, new Vector3(-2.39f, 5.32f, 0.86f), Path.FacingDirection.left, 8);
 
         if (activity == Activities.TVChair)
-            StartWalk(3, new Vector3(4.8f, 8.35f, 1.75f), Movement.FacingDirection.right, 20);
+            StartWalk(3, new Vector3(4.8f, 8.35f, 1.75f), Path.FacingDirection.right, 20);
 
         if (activity == Activities.FrontDoor)
-            StartWalk(1, new Vector3(-7.24f, 2.12f, 2.62f), Movement.FacingDirection.forward, 2);
+            StartWalk(1, new Vector3(-7.24f, 2.12f, 2.62f), Path.FacingDirection.forward, 2);
 
         if (activity == Activities.Typewriter)
-            StartWalk(3, new Vector3(-2.327f, 8.77f, 1.137f), Movement.FacingDirection.forward, 10);
+            StartWalk(3, new Vector3(-2.327f, 8.62f, 1.137f), Path.FacingDirection.forward, 10);
 
         if (activity == Activities.Kitchen)
-            StartWalk(1, new Vector3(5.56f, 2.17f, 2.62f), Movement.FacingDirection.forward, 5);
+            StartWalk(1, new Vector3(5.56f, 2.17f, 2.62f), Path.FacingDirection.forward, 5);
 
         if (activity == Activities.Piano)
-            StartWalk(3, new Vector3(1.99f, 8.54f, 1.767f), Movement.FacingDirection.backward, 10);
+            StartWalk(3, new Vector3(1.99f, 8.54f, 1.767f), Path.FacingDirection.backward, 10);
 
         if (activity == Activities.Sofa)
-            StartWalk(1, new Vector3(-2.86f, 1.98f, 0.84f), Movement.FacingDirection.forward, 5);
+            StartWalk(1, new Vector3(-2.997f, 1.993f, 1.34f), Path.FacingDirection.forward, 5);
 
         if (activity == Activities.Sleep)
-            StartWalk(2, new Vector3(7.22f, 5.43f, 2.62f), Movement.FacingDirection.up, 3600);
+            StartWalk(2, new Vector3(7.22f, 5.43f, 2.62f), Path.FacingDirection.up, 3600);
 
         if (activity == Activities.LeaveHouse)
-            StartWalk(1, new Vector3(-7.83f, 2.16f, 1.15f), Movement.FacingDirection.backward, 20);
+            StartWalk(1, new Vector3(-7.83f, 2.16f, 1.15f), Path.FacingDirection.backward, 20);
 
         if (activity == Activities.BuildFire)
-            StartWalk(1, new Vector3(-5.9f, 2.16f, 1.54f), Movement.FacingDirection.backward, 2);
+            StartWalk(1, new Vector3(-5.9f, 2.16f, 1.54f), Path.FacingDirection.backward, 2);
 
         if (activity == Activities.Cupboard)
-            StartWalk(1, new Vector3(6.24f, 2.16f, 1.79f), Movement.FacingDirection.backward, 2);
+            StartWalk(1, new Vector3(6.24f, 2.16f, 1.79f), Path.FacingDirection.backward, 2);
 
         if (activity == Activities.Toilet)
-            StartWalk(2, new Vector3(-1.11f, 5.53f, 1.43f), Movement.FacingDirection.backward, 10);
+            StartWalk(2, new Vector3(-1.11f, 5.53f, 1.43f), Path.FacingDirection.backward, 10);
 
         if (activity == Activities.ReadBook)
-            StartWalk(2, new Vector3(-4.249f, 5.392f, 1.43f), Movement.FacingDirection.backward, 1);
+            StartWalk(2, new Vector3(-4.249f, 5.392f, 1.43f), Path.FacingDirection.backward, 1);
 
         if (activity == Activities.Exercise)
-            StartWalk(2, new Vector3(5.77f, 5.392f, 2.17f), Movement.FacingDirection.forward, 10);
+            StartWalk(2, new Vector3(5.77f, 5.392f, 2.17f), Path.FacingDirection.forward, 10);
 
         if (activity == Activities.Phone)
-            StartWalk(1, new Vector3(-2.62f, 1.94f, 0.883f), Movement.FacingDirection.forward, 10);
+            StartWalk(1, new Vector3(-2.997f, 1.993f, 1.34f), Path.FacingDirection.forward, 10);
             
 
 
@@ -301,6 +301,8 @@ public class LcpManController : MonoBehaviour {
             transform.position = new Vector3(7.948f, 5.97f, 2.62f);
             transform.forward = new Vector3(0f, 1f, 0f);
             PlaySound("snore", true);
+
+            GameObject.Find("Bed_Sheet").GetComponent<MeshRenderer>().enabled = true;
         }
 
         if (currentActivity == Activities.LeaveHouse)
@@ -325,6 +327,14 @@ public class LcpManController : MonoBehaviour {
         {
             GameObject.Find("Book").GetComponent<MeshRenderer>().enabled = true;
             activityQueue.Push(Activities.Sofa);
+        }
+
+        if (activity == Activities.TVChair)
+        {
+            if (GameObject.Find("TVScreen").GetComponent<TVController>().state == TVController.States.off)
+            {
+                FinishedActivity(Activities.TV);
+            }
         }
 
         state = CharacterStates.doingactivity;
@@ -390,6 +400,8 @@ public class LcpManController : MonoBehaviour {
         {
             transform.position = new Vector3(7.22f, 5.43f, 2.62f);
             transform.forward = new Vector3(0f, 0f, 1f);
+
+            GameObject.Find("Bed_Sheet").GetComponent<MeshRenderer>().enabled = false;
         }
 
         if (activity == Activities.TV)
@@ -497,18 +509,15 @@ public class LcpManController : MonoBehaviour {
         return Activities.FrontDoor;
     }
 
-    void StartWalk(int floor, Vector3 location, Movement.FacingDirection facing, int timeToStay)
+    void StartWalk(int floor, Vector3 location, Path.FacingDirection facing, int timeToStay)
     {
-        StartAltSound("walk", true);
-
-        List<Vector3> waypoints = MoveBetweenFloors(currentFloor, floor);
+        List<Vector3> waypoints = GetPath(currentFloor, floor);
         waypoints.Add(location);
-        path = new Movement(waypoints, facing, floor, timeToStay);
-        state = CharacterStates.walking;
-        StartCoroutine(MoveCharCoroutine(path));
+        path = new Path(waypoints, facing, floor, timeToStay);
+        StartCoroutine(WalkCoroutine(path));
     }
 
-    List<Vector3> MoveBetweenFloors(int startFloor, int endFloor)
+    List<Vector3> GetPath(int startFloor, int endFloor)
     {
         List<Vector3> waypoints = new List<Vector3>();
 
@@ -573,11 +582,13 @@ public class LcpManController : MonoBehaviour {
         return waypoints;
     }
     
-    IEnumerator MoveCharCoroutine(Movement m)
+    IEnumerator WalkCoroutine(Path path)
     {
+        StartAltSound("walk", true);
+        state = CharacterStates.walking;
         characterModel.GetComponent<Animator>().SetBool("isWalking", true);
 
-        foreach (Vector3 position in m.waypoints)
+        foreach (Vector3 position in path.waypoints)
         {
             while (Vector3.Distance(transform.position, position) > .0001)
             {
@@ -585,28 +596,37 @@ public class LcpManController : MonoBehaviour {
                 lookPos.y = 0;
                 var rotation = Quaternion.LookRotation(lookPos);
                 transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime * 10);
-
                 transform.position = Vector3.MoveTowards(transform.position, position, speed * Time.deltaTime);
                 yield return null;
             }
+
+            if (position == new Vector3(0.35f, 2.12f, 2.62f))
+                GameObject.Find("Main Camera").GetComponent<CameraController>().floor = 1;
+            if (position == new Vector3(2.62f, 5.3f, 2.4f))
+                GameObject.Find("Main Camera").GetComponent<CameraController>().floor = 2;
+            if (position == new Vector3(0.21f, 8.58f, 2.37f))
+                GameObject.Find("Main Camera").GetComponent<CameraController>().floor = 3;
+
         }
 
         characterModel.GetComponent<Animator>().SetBool("isWalking", false);
 
-        if (m.finalFacing == Movement.FacingDirection.forward)
+        if (path.finalFacing == Path.FacingDirection.forward)
                 transform.forward = new Vector3(0f, 0f, 1f);
-        else if (m.finalFacing == Movement.FacingDirection.backward)
+        else if (path.finalFacing == Path.FacingDirection.backward)
             transform.forward = new Vector3(0f, 0f, -1f);
-        else if (m.finalFacing == Movement.FacingDirection.right)
+        else if (path.finalFacing == Path.FacingDirection.right)
             transform.forward = new Vector3(1f, 0f, 0f);
-        else if (m.finalFacing == Movement.FacingDirection.left)
+        else if (path.finalFacing == Path.FacingDirection.left)
             transform.forward = new Vector3(-1f, 0f, 0f);
-        else if (m.finalFacing == Movement.FacingDirection.up)
+        else if (path.finalFacing == Path.FacingDirection.up)
             transform.forward = new Vector3(0f, 1f, 0f);
 
-        currentFloor = m.floor;
+        currentFloor = path.floor;
         state = CharacterStates.startactivity;
         arrivalTime = System.DateTime.Now;
+
+        
     }
 
     void PlaySound(string sound, bool loop)

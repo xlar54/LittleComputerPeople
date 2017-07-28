@@ -5,7 +5,7 @@ using System.Text;
 using UnityEngine;
 
 [System.Serializable]
-public class Movement
+public class Path
 {
     public enum FacingDirection
     {
@@ -21,12 +21,12 @@ public class Movement
     public int floor;
     public int stayMaxTime;
 
-    public Movement()
+    public Path()
     {
 
     }
 
-    public Movement(List<Vector3> waypoints, FacingDirection finalFacing, int floor, int stayMaxTime)
+    public Path(List<Vector3> waypoints, FacingDirection finalFacing, int floor, int stayMaxTime)
     {
         this.waypoints = waypoints;
         this.finalFacing = finalFacing;
