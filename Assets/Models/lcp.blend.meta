@@ -108,6 +108,7 @@ ModelImporter:
     100200: Kitchen_table_001
     100202: Livingroom_Chair
     100204: Bed_Sheet
+    100206: Cube
     400000: Attic_door
     400002: BackWall
     400004: Bathroom_floor
@@ -211,6 +212,7 @@ ModelImporter:
     400200: Kitchen_table_001
     400202: Livingroom_Chair
     400204: Bed_Sheet
+    400206: Cube
     2300000: Attic_door
     2300002: BackWall
     2300004: Bathroom_floor
@@ -313,6 +315,7 @@ ModelImporter:
     2300198: Kitchen_table_001
     2300200: Livingroom_Chair
     2300202: Bed_Sheet
+    2300204: Cube
     3300000: Attic_door
     3300002: BackWall
     3300004: Bathroom_floor
@@ -415,6 +418,7 @@ ModelImporter:
     3300198: Kitchen_table_001
     3300200: Livingroom_Chair
     3300202: Bed_Sheet
+    3300204: Cube
     4300000: Refrigerator_handle_002
     4300002: Refrigerator_handle_001
     4300004: Bathroom_toilet_door_knob
@@ -517,6 +521,7 @@ ModelImporter:
     4300198: Kitchen_table_001
     4300200: Livingroom_Chair
     4300202: Bed_Sheet
+    4300204: Cube
     7400000: Default Take
     9500000: //RootNode
   materials:

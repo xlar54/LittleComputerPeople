@@ -32,7 +32,9 @@ public class LcpManController : MonoBehaviour {
         Toilet,
         ReadBook,
         Exercise,
-        Phone
+        Phone,
+        Attic,
+        Closet
     }
     public enum CharacterStates
     {
@@ -131,6 +133,21 @@ public class LcpManController : MonoBehaviour {
             activityQueue.Push(Activities.Cupboard);
         }
 
+        if (Input.GetKeyDown("l"))
+        {
+            activityQueue.Push(Activities.LeaveHouse);
+        }
+
+        if (Input.GetKeyDown("z"))
+        {
+            activityQueue.Push(Activities.Attic);
+        }
+        if (Input.GetKeyDown("x"))
+        {
+            activityQueue.Push(Activities.Closet);
+        }
+
+
 
         if (Input.GetKeyDown("a"))
         {
@@ -218,8 +235,12 @@ public class LcpManController : MonoBehaviour {
 
         if (activity == Activities.Phone)
             StartWalk(1, new Vector3(-2.997f, 1.993f, 1.34f), Path.FacingDirection.forward, 10);
-            
 
+        if (activity == Activities.Attic)
+            StartWalk(3, new Vector3(-0.79f, 8.66f, 1.15f), Path.FacingDirection.backward, 10);
+
+        if (activity == Activities.Closet)
+            StartWalk(2, new Vector3(5.19f, 5.43f, 1.15f), Path.FacingDirection.backward, 8);
 
     }
 
@@ -307,23 +328,27 @@ public class LcpManController : MonoBehaviour {
 
         if (currentActivity == Activities.LeaveHouse)
         {
-            GameObject.Find("FrontDoor").transform.Rotate(new Vector3(0, 75.42f, 0));
-            GameObject.Find("FrontDoor").transform.position = new Vector3(-6.96f, 3.13f, 1.13f);
-            GameObject.Find("FrontDoor").tag = "open";
-
+            GameObject.Find("FrontDoor").GetComponent<DoorController>().state = DoorController.DoorStates.open; 
             transform.position = new Vector3(-7.24f, 2.12f, -1.4f);
         }
 
         if (currentActivity == Activities.Toilet)
         {
-            GameObject.Find("ToiletDoor").transform.Rotate(new Vector3(0, 63.73f, 0));
-            GameObject.Find("ToiletDoor").transform.position = new Vector3(-0.53f, 6.38f, 0.91f);
-            GameObject.Find("ToiletDoor").tag = "open";
-
+            GameObject.Find("Toilet Door").GetComponent<DoorController>().state = DoorController.DoorStates.open;
             transform.position = new Vector3(-7.24f, 2.12f, -1.4f);
         }
 
-        if(currentActivity == Activities.ReadBook)
+        if (currentActivity == Activities.Attic)
+        {
+            GameObject.Find("Attic Door").GetComponent<DoorController>().state = DoorController.DoorStates.open;
+        }
+
+        if (currentActivity == Activities.Closet)
+        {
+            GameObject.Find("Closet Door").GetComponent<DoorController>().state = DoorController.DoorStates.open;
+        }
+
+        if (currentActivity == Activities.ReadBook)
         {
             GameObject.Find("Book").GetComponent<MeshRenderer>().enabled = true;
             activityQueue.Push(Activities.Sofa);
@@ -346,55 +371,54 @@ public class LcpManController : MonoBehaviour {
         System.TimeSpan timeDifference = System.DateTime.Now - arrivalTime;
 
         if (timeDifference.Seconds > path.stayMaxTime)
-        {
             state = CharacterStates.finishedactivity;
-        }
 
-        if (currentActivity == Activities.LeaveHouse && timeDifference.Seconds > 0.5f)
+        if (currentActivity == Activities.LeaveHouse)
         {
-            if (GameObject.Find("FrontDoor").tag == "open")
+            if(timeDifference.Seconds > 19)
             {
-                GameObject.Find("FrontDoor").transform.position = new Vector3(-7.37f, 3.13f, 0.43f);
-                GameObject.Find("FrontDoor").transform.rotation = Quaternion.identity;
-
-                PlaySound("door-close", false);
-                GameObject.Find("FrontDoor").tag = "closed";
+                GameObject.Find("FrontDoor").GetComponent<DoorController>().state = DoorController.DoorStates.open;
             }
-
+            else if (timeDifference.Seconds > 0.5f)
+            {
+                GameObject.Find("FrontDoor").GetComponent<DoorController>().state = DoorController.DoorStates.closed;
+            }
         }
 
         if (currentActivity == Activities.Toilet)
         {
-            if (timeDifference.Seconds > 0.5f)
+            if (timeDifference.Seconds > 8)
             {
-                if (GameObject.Find("ToiletDoor").tag == "open")
-                {
-                    GameObject.Find("ToiletDoor").transform.position = new Vector3(-0.77f, 6.38f, 0.39f);
-                    GameObject.Find("ToiletDoor").transform.rotation = Quaternion.identity;
-
-                    PlaySound("door-close", false);
-                    GameObject.Find("ToiletDoor").tag = "closed";
-                }
+                GameObject.Find("Toilet Door").GetComponent<DoorController>().state = DoorController.DoorStates.open;
             }
-
-            if (timeDifference.Seconds > 2.0f && lastSound != "toilet")
-                PlaySound("toilet", false);
+            else if (timeDifference.Seconds > 2)
+            {
+                if (lastSound != "toilet") PlaySound("toilet", false);
+            }
+            else if (timeDifference.Seconds > 0.5f)
+            {
+                GameObject.Find("Toilet Door").GetComponent<DoorController>().state = DoorController.DoorStates.closed;
+            }
         }
 
+        if (currentActivity == Activities.Attic)
+        {
+            if (timeDifference.Seconds > 9)
+            {
+                GameObject.Find("Attic Door").GetComponent<DoorController>().state = DoorController.DoorStates.open;
+            }
+            else if (timeDifference.Seconds > 0.5f)
+            {
+                GameObject.Find("Attic Door").GetComponent<DoorController>().state = DoorController.DoorStates.closed;
+            }
+        }
     }
 
     void FinishedActivity(Activities activity)
     {
         state = CharacterStates.idle;
 
-        GameObject.Find("Shower").GetComponent<ParticleSystem>().Stop();
-        GetComponent<AudioSource>().Stop();
-
-        characterModel.GetComponent<Animator>().SetBool("isSitting", false);
-        characterModel.GetComponent<Animator>().SetBool("isBending", false);
-        characterModel.GetComponent<Animator>().SetBool("isDoing", false);
-        characterModel.GetComponent<Animator>().SetBool("isEating", false);
-        characterModel.GetComponent<Animator>().SetBool("isExercising", false);
+        StopAnimations();
 
         if (activity == Activities.Sleep)
         {
@@ -406,7 +430,7 @@ public class LcpManController : MonoBehaviour {
 
         if (activity == Activities.TV)
         {
-            if(GameObject.Find("TVScreen").GetComponent<TVController>().state == TVController.States.off)
+            if (GameObject.Find("TVScreen").GetComponent<TVController>().state == TVController.States.off)
             {
                 GameObject.Find("TVScreen").GetComponent<TVController>().state = TVController.States.on;
                 PlaySound("tv1", false);
@@ -415,7 +439,7 @@ public class LcpManController : MonoBehaviour {
             else
             {
                 GameObject.Find("TVScreen").GetComponent<TVController>().state = TVController.States.off;
-            } 
+            }
         }
 
         if (activity == Activities.Cupboard)
@@ -430,16 +454,26 @@ public class LcpManController : MonoBehaviour {
 
         if (activity == Activities.LeaveHouse)
         {
-            GameObject.Find("FrontDoor").transform.Rotate(new Vector3(0, 0, 0));
-            GameObject.Find("FrontDoor").transform.position = new Vector3(-7.37f, 3.13f, 0.43f);
-
+            GameObject.Find("FrontDoor").GetComponent<DoorController>().state = DoorController.DoorStates.closed;
             transform.position = new Vector3(-7.83f, 2.16f, 1.15f);
         }
 
         if (activity == Activities.Toilet)
         {
+            GameObject.Find("Toilet Door").GetComponent<DoorController>().state = DoorController.DoorStates.closed;
             transform.position = new Vector3(-1.11f, 5.53f, 1.43f);
             activityQueue.Push(Activities.BathroomSink);
+        }
+
+        if (activity == Activities.Attic)
+        {
+            GameObject.Find("Attic Door").GetComponent<DoorController>().state = DoorController.DoorStates.closed;
+            transform.position = new Vector3(-0.79f, 8.66f, 1.15f);
+        }
+
+        if (activity == Activities.Closet)
+        {
+            GameObject.Find("Closet Door").GetComponent<DoorController>().state = DoorController.DoorStates.closed;
         }
 
         if (activity == Activities.BuildFire)
@@ -465,6 +499,18 @@ public class LcpManController : MonoBehaviour {
         }
     }
 
+    private void StopAnimations()
+    {
+        characterModel.GetComponent<Animator>().SetBool("isSitting", false);
+        characterModel.GetComponent<Animator>().SetBool("isBending", false);
+        characterModel.GetComponent<Animator>().SetBool("isDoing", false);
+        characterModel.GetComponent<Animator>().SetBool("isEating", false);
+        characterModel.GetComponent<Animator>().SetBool("isExercising", false);
+
+        GameObject.Find("Shower").GetComponent<ParticleSystem>().Stop();
+        GetComponent<AudioSource>().Stop();
+    }
+
     Activities GetNextActivity()
     {
         if (activityQueue.Count > 0)
@@ -479,7 +525,7 @@ public class LcpManController : MonoBehaviour {
             return Activities.Sleep;
         }
 
-        int nextActivity = UnityEngine.Random.Range(1, 22);
+        int nextActivity = UnityEngine.Random.Range(1, 24);
 
         switch (nextActivity)
         {
@@ -504,6 +550,8 @@ public class LcpManController : MonoBehaviour {
             case 19: return Activities.ReadBook;
             case 20: return Activities.Exercise;
             case 21: return Activities.Phone;
+            case 22: return Activities.Attic;
+            case 23: return Activities.Closet;
         }
 
         return Activities.FrontDoor;
