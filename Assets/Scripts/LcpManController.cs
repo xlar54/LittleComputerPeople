@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class LcpManController : MonoBehaviour {
 
@@ -34,7 +35,8 @@ public class LcpManController : MonoBehaviour {
         Exercise,
         Phone,
         Attic,
-        Closet
+        Closet,
+        Refrigerator
     }
     public enum CharacterStates
     {
@@ -52,10 +54,12 @@ public class LcpManController : MonoBehaviour {
     public CharacterStates state;
     private Path path;
     private string lastSound = "";
+    private bool hasStarted = false;
 
     private Vector3 tempVec1;
     private Vector3 tempVec2;
     private Vector3 panelVector3;
+    private Vector3 typewriterHeadVector3;
 
     // Use this for initialization
     void Start () {
@@ -66,7 +70,12 @@ public class LcpManController : MonoBehaviour {
         panelVector3 = GameObject.Find("Panel").transform.position;
         GameObject.Find("Panel").transform.position = new Vector3(0, 0, 0);
 
+        typewriterHeadVector3 = GameObject.Find("TypewriterHead").transform.position;
+        GameObject.Find("TypewriterHead").transform.position = new Vector3(0, 0, 0);
+
         StartCoroutine(BlinkCoroutine());
+
+        activityQueue.Push(Activities.FrontDoor);
 	}
     
 
@@ -146,6 +155,11 @@ public class LcpManController : MonoBehaviour {
         {
             activityQueue.Push(Activities.Closet);
         }
+        if (Input.GetKeyDown("r"))
+        {
+            activityQueue.Push(Activities.Sofa);
+        }
+
 
 
 
@@ -186,7 +200,7 @@ public class LcpManController : MonoBehaviour {
             StartWalk(2, new Vector3(-4.78f, 5.41f, 2.62f), Path.FacingDirection.forward, 3);
 
         if (activity == Activities.KitchenTable)
-            StartWalk(1, new Vector3(3.66f, 2.27f, 1.75f), Path.FacingDirection.forward, 10);
+            StartWalk(1, new Vector3(3.66f, 2.27f, 1.75f), Path.FacingDirection.forward, 10, true);
 
         if (activity == Activities.ComputerDesk)
             StartWalk(2, new Vector3(-6.04f, 5.32f, 1.64f), Path.FacingDirection.backward, 20);
@@ -201,7 +215,7 @@ public class LcpManController : MonoBehaviour {
             StartWalk(1, new Vector3(-7.24f, 2.12f, 2.62f), Path.FacingDirection.forward, 2);
 
         if (activity == Activities.Typewriter)
-            StartWalk(3, new Vector3(-2.327f, 8.62f, 1.137f), Path.FacingDirection.forward, 10);
+            StartWalk(3, new Vector3(-2.327f, 8.62f, 1.137f), Path.FacingDirection.forward, 0);
 
         if (activity == Activities.Kitchen)
             StartWalk(1, new Vector3(5.56f, 2.17f, 2.62f), Path.FacingDirection.forward, 5);
@@ -210,7 +224,7 @@ public class LcpManController : MonoBehaviour {
             StartWalk(3, new Vector3(1.99f, 8.54f, 1.767f), Path.FacingDirection.backward, 10);
 
         if (activity == Activities.Sofa)
-            StartWalk(1, new Vector3(-2.997f, 1.993f, 1.34f), Path.FacingDirection.forward, 5);
+            StartWalk(1, new Vector3(-2.997f, 1.993f, 1.34f), Path.FacingDirection.forward, 8);
 
         if (activity == Activities.Sleep)
             StartWalk(2, new Vector3(7.22f, 5.43f, 2.62f), Path.FacingDirection.up, 3600);
@@ -242,6 +256,8 @@ public class LcpManController : MonoBehaviour {
         if (activity == Activities.Closet)
             StartWalk(2, new Vector3(5.19f, 5.43f, 1.15f), Path.FacingDirection.backward, 8);
 
+        if (activity == Activities.Refrigerator)
+            StartWalk(1, new Vector3(7.11f, 2.1f, 1.95f), Path.FacingDirection.backward, 3);
     }
 
     void StartActivity(Activities activity)
@@ -282,7 +298,10 @@ public class LcpManController : MonoBehaviour {
 
         if (currentActivity == Activities.Sofa)
         {
-            characterModel.GetComponent<Animator>().SetBool("isSitting", true);
+            if (GameObject.Find("Book").GetComponent<MeshRenderer>().enabled == true)
+                characterModel.GetComponent<Animator>().SetBool("isReading", true);
+            else
+                characterModel.GetComponent<Animator>().SetBool("isSitting", true);
         }
 
         if (currentActivity == Activities.Phone)
@@ -341,11 +360,17 @@ public class LcpManController : MonoBehaviour {
         if (currentActivity == Activities.Attic)
         {
             GameObject.Find("Attic Door").GetComponent<DoorController>().state = DoorController.DoorStates.open;
+            transform.position = new Vector3(-7.24f, 2.12f, -1.4f);
         }
 
         if (currentActivity == Activities.Closet)
         {
             GameObject.Find("Closet Door").GetComponent<DoorController>().state = DoorController.DoorStates.open;
+        }
+
+        if (currentActivity == Activities.Refrigerator)
+        {
+            GameObject.Find("Refrigerator Door").GetComponent<DoorController>().state = DoorController.DoorStates.open;
         }
 
         if (currentActivity == Activities.ReadBook)
@@ -370,8 +395,12 @@ public class LcpManController : MonoBehaviour {
     {
         System.TimeSpan timeDifference = System.DateTime.Now - arrivalTime;
 
-        if (timeDifference.Seconds > path.stayMaxTime)
-            state = CharacterStates.finishedactivity;
+        if (path.stayMaxTime > 0)
+        {
+            if (timeDifference.Seconds > path.stayMaxTime)
+                state = CharacterStates.finishedactivity;
+        }
+
 
         if (currentActivity == Activities.LeaveHouse)
         {
@@ -412,6 +441,72 @@ public class LcpManController : MonoBehaviour {
                 GameObject.Find("Attic Door").GetComponent<DoorController>().state = DoorController.DoorStates.closed;
             }
         }
+
+        if (currentActivity == Activities.Typewriter && !hasStarted)
+        {
+            int r = UnityEngine.Random.Range(1, 5);
+            string t = "";
+
+            switch(r)
+            {
+                case 1: t = "Dear Friend, |I wanted to tell you how much I love my new home.  |It's a really cool place to live.  |Thanks!|Bob|";
+                    break;
+                case 2: t = "Dear Friend, |Living alone is kind of dull.  But at least I have you to keep me entertained.  And honestly... its 2017. Why do I still|use a typewriter?|Bob|";
+                    break;
+                case 3: t = "Dear Friend, |I realize Im a remake of an older computer game. But being in 3D, |I feel a little bit fatter than I used to. Do you think| Ive put on weight since the 80s?|Bob|";
+                    break;
+                case 4: t = "Dear Friend, |I used to have a a dog.  I miss him.  What ever happened to him?  Maybe|you will program me a dog someday? Or a girlfriend?|Bob|";
+                    break;
+                case 5: t = "Dear Friend, |You may think I have endless supplies of paper to type on, |but I really dont.  Nor do I have endless food and water.|Lets get on it, mmkay?|Bob|";
+                    break;
+            }
+
+            StartCoroutine(TypeLetter(t));
+        }
+
+        hasStarted = true;
+    }
+
+    private IEnumerator TypeLetter(string v)
+    {
+        GameObject.Find("TypewriterHead").transform.position = typewriterHeadVector3;
+
+        GameObject.Find("PageText (0)").GetComponent<Text>().text = "";
+        GameObject.Find("PageText (1)").GetComponent<Text>().text = "";
+        GameObject.Find("PageText (2)").GetComponent<Text>().text = "";
+        GameObject.Find("PageText (3)").GetComponent<Text>().text = "";
+        GameObject.Find("PageText (4)").GetComponent<Text>().text = "";
+
+        for (int x=0; x < v.Length; x++)
+        {
+            string s = v.Substring(x, 1);
+            if (s == "|")
+            {
+                GameObject.Find("PageText (0)").GetComponent<Text>().text = GameObject.Find("PageText (1)").GetComponent<Text>().text;
+                GameObject.Find("PageText (1)").GetComponent<Text>().text = GameObject.Find("PageText (2)").GetComponent<Text>().text;
+                GameObject.Find("PageText (2)").GetComponent<Text>().text = GameObject.Find("PageText (3)").GetComponent<Text>().text;
+                GameObject.Find("PageText (3)").GetComponent<Text>().text = GameObject.Find("PageText (4)").GetComponent<Text>().text;
+                GameObject.Find("PageText (4)").GetComponent<Text>().text = "";
+
+                GameObject.Find("TypewriterHead").transform.position = typewriterHeadVector3;
+            }
+            else
+            {
+                Vector3 pos = GameObject.Find("TypewriterHead").transform.position;
+                pos.x -= 0.1f;
+                GameObject.Find("TypewriterHead").transform.position = pos;
+                GameObject.Find("PageText (4)").GetComponent<Text>().text += s;
+            }
+                
+
+            yield return new WaitForSeconds(0.15f);
+        }
+
+        yield return new WaitForSeconds(3);
+
+        GameObject.Find("TypewriterHead").transform.position = new Vector3(0, 0, 0);
+        state = CharacterStates.finishedactivity;
+
     }
 
     void FinishedActivity(Activities activity)
@@ -444,7 +539,7 @@ public class LcpManController : MonoBehaviour {
 
         if (activity == Activities.Cupboard)
         {
-            activityQueue.Push(Activities.Stove);
+            activityQueue.Push(Activities.Refrigerator);
         }
 
         if (activity == Activities.Stove)
@@ -476,6 +571,12 @@ public class LcpManController : MonoBehaviour {
             GameObject.Find("Closet Door").GetComponent<DoorController>().state = DoorController.DoorStates.closed;
         }
 
+        if (activity == Activities.Refrigerator)
+        {
+            GameObject.Find("Refrigerator Door").GetComponent<DoorController>().state = DoorController.DoorStates.closed;
+            activityQueue.Push(Activities.Stove);
+        }
+
         if (activity == Activities.BuildFire)
         {
             GameObject.Find("Fire").GetComponent<ParticleSystem>().Play();
@@ -497,6 +598,8 @@ public class LcpManController : MonoBehaviour {
             GameObject.Find("Phone").GetComponent<MeshRenderer>().enabled = false;
             characterModel.GetComponent<Animator>().SetBool("isUsingPhone", false);
         }
+
+        hasStarted = false;
     }
 
     private void StopAnimations()
@@ -506,6 +609,7 @@ public class LcpManController : MonoBehaviour {
         characterModel.GetComponent<Animator>().SetBool("isDoing", false);
         characterModel.GetComponent<Animator>().SetBool("isEating", false);
         characterModel.GetComponent<Animator>().SetBool("isExercising", false);
+        characterModel.GetComponent<Animator>().SetBool("isReading", false);
 
         GameObject.Find("Shower").GetComponent<ParticleSystem>().Stop();
         GetComponent<AudioSource>().Stop();
@@ -557,12 +661,12 @@ public class LcpManController : MonoBehaviour {
         return Activities.FrontDoor;
     }
 
-    void StartWalk(int floor, Vector3 location, Path.FacingDirection facing, int timeToStay)
+    void StartWalk(int floor, Vector3 location, Path.FacingDirection facing, int timeToStay, bool isCarrying = false)
     {
         List<Vector3> waypoints = GetPath(currentFloor, floor);
         waypoints.Add(location);
         path = new Path(waypoints, facing, floor, timeToStay);
-        StartCoroutine(WalkCoroutine(path));
+        StartCoroutine(WalkCoroutine(path, isCarrying));
     }
 
     List<Vector3> GetPath(int startFloor, int endFloor)
@@ -630,11 +734,15 @@ public class LcpManController : MonoBehaviour {
         return waypoints;
     }
     
-    IEnumerator WalkCoroutine(Path path)
+    IEnumerator WalkCoroutine(Path path, bool isCarrying)
     {
         StartAltSound("walk", true);
         state = CharacterStates.walking;
-        characterModel.GetComponent<Animator>().SetBool("isWalking", true);
+
+        if (isCarrying)
+            characterModel.GetComponent<Animator>().SetBool("isCarrying", true);
+        else
+            characterModel.GetComponent<Animator>().SetBool("isWalking", true);
 
         foreach (Vector3 position in path.waypoints)
         {
@@ -657,6 +765,7 @@ public class LcpManController : MonoBehaviour {
 
         }
 
+        characterModel.GetComponent<Animator>().SetBool("isCarrying", false);
         characterModel.GetComponent<Animator>().SetBool("isWalking", false);
 
         if (path.finalFacing == Path.FacingDirection.forward)
