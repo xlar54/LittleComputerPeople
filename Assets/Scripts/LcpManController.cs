@@ -287,7 +287,7 @@ public class LcpManController : MonoBehaviour {
 
         if (currentActivity == Activities.Typewriter)
         {
-            GameObject.Find("Panel").transform.position = panelVector3;
+            //GameObject.Find("Panel").transform.position = panelVector3;
             PlaySound("typewriter", true);
         }
 
@@ -461,52 +461,16 @@ public class LcpManController : MonoBehaviour {
                     break;
             }
 
-            StartCoroutine(TypeLetter(t));
+            GameObject.Find("GameObject").GetComponent<TypewriterController>().enabled = true;
+            GameObject.Find("GameObject").GetComponent<TypewriterController>().characterLetter = t;
+        }
+
+        if (currentActivity == Activities.Typewriter && GameObject.Find("GameObject").GetComponent<TypewriterController>().enabled == false && hasStarted)
+        {
+            state = CharacterStates.finishedactivity;
         }
 
         hasStarted = true;
-    }
-
-    private IEnumerator TypeLetter(string v)
-    {
-        GameObject.Find("TypewriterHead").transform.position = typewriterHeadVector3;
-
-        GameObject.Find("PageText (0)").GetComponent<Text>().text = "";
-        GameObject.Find("PageText (1)").GetComponent<Text>().text = "";
-        GameObject.Find("PageText (2)").GetComponent<Text>().text = "";
-        GameObject.Find("PageText (3)").GetComponent<Text>().text = "";
-        GameObject.Find("PageText (4)").GetComponent<Text>().text = "";
-
-        for (int x=0; x < v.Length; x++)
-        {
-            string s = v.Substring(x, 1);
-            if (s == "|")
-            {
-                GameObject.Find("PageText (0)").GetComponent<Text>().text = GameObject.Find("PageText (1)").GetComponent<Text>().text;
-                GameObject.Find("PageText (1)").GetComponent<Text>().text = GameObject.Find("PageText (2)").GetComponent<Text>().text;
-                GameObject.Find("PageText (2)").GetComponent<Text>().text = GameObject.Find("PageText (3)").GetComponent<Text>().text;
-                GameObject.Find("PageText (3)").GetComponent<Text>().text = GameObject.Find("PageText (4)").GetComponent<Text>().text;
-                GameObject.Find("PageText (4)").GetComponent<Text>().text = "";
-
-                GameObject.Find("TypewriterHead").transform.position = typewriterHeadVector3;
-            }
-            else
-            {
-                Vector3 pos = GameObject.Find("TypewriterHead").transform.position;
-                pos.x -= 0.1f;
-                GameObject.Find("TypewriterHead").transform.position = pos;
-                GameObject.Find("PageText (4)").GetComponent<Text>().text += s;
-            }
-                
-
-            yield return new WaitForSeconds(0.15f);
-        }
-
-        yield return new WaitForSeconds(3);
-
-        GameObject.Find("TypewriterHead").transform.position = new Vector3(0, 0, 0);
-        state = CharacterStates.finishedactivity;
-
     }
 
     void FinishedActivity(Activities activity)
@@ -589,7 +553,7 @@ public class LcpManController : MonoBehaviour {
 
         if (currentActivity == Activities.Typewriter)
         {
-            GameObject.Find("Panel").transform.position = new Vector3(0, 0, 0);
+            GameObject.Find("GameObject").GetComponent<TypewriterController>().enabled = false;
         }
 
         if (currentActivity == Activities.Phone)
