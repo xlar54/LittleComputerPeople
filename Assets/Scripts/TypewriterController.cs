@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -141,6 +142,9 @@ public class TypewriterController : MonoBehaviour {
 
                     TypewriterHead.transform.position = typewriterHeadDefaultPosition;
                     lastPlayerEntered = TextLines[TextLines.Count - 2].text;
+
+                    PlayerInputHandler(lastPlayerEntered);
+
                 }
                 else if(s == "\b")
                 {
@@ -180,5 +184,93 @@ public class TypewriterController : MonoBehaviour {
         yield return new WaitForSeconds(3);
 
         Hide();
+    }
+
+    private void PlayerInputHandler(string input)
+    {
+        GameObject go = GameObject.Find("character");
+
+        input = input.ToLower();
+
+        if (input.Contains("please"))
+        {
+            if(input.Contains("read"))
+            {
+                go.GetComponent<LcpManController>().activityQueue.Push(LcpManController.Activities.ReadBook);
+            }
+
+            if (input.Contains("type") || input.Contains("write") || input.Contains("letter"))
+            {
+                go.GetComponent<LcpManController>().activityQueue.Push(LcpManController.Activities.Typewriter);
+            }
+
+            if (input.Contains("tv") || input.Contains("television"))
+            {
+                go.GetComponent<LcpManController>().activityQueue.Push(LcpManController.Activities.TVChair);
+            }
+
+            if (input.Contains("sleep") || input.Contains("bed") || input.Contains("bedtime"))
+            {
+                go.GetComponent<LcpManController>().activityQueue.Push(LcpManController.Activities.Sleep);
+            }
+
+            if (input.Contains("sofa") || input.Contains("relax") || input.Contains("rest"))
+            {
+                go.GetComponent<LcpManController>().activityQueue.Push(LcpManController.Activities.Sofa);
+            }
+
+            if (input.Contains("play") || input.Contains("piano") || input.Contains("music"))
+            {
+                go.GetComponent<LcpManController>().activityQueue.Push(LcpManController.Activities.Piano);
+            }
+
+            if (input.Contains("call") || input.Contains("telephone") || input.Contains("phone"))
+            {
+                go.GetComponent<LcpManController>().activityQueue.Push(LcpManController.Activities.Phone);
+            }
+
+            if (input.Contains("eat") || input.Contains("food") || input.Contains("dinner") || input.Contains("lunch") || input.Contains("breakfast"))
+            {
+                go.GetComponent<LcpManController>().activityQueue.Push(LcpManController.Activities.Cupboard);
+            }
+
+            if (input.Contains("fire") || input.Contains("fireplace") || input.Contains("chimney"))
+            {
+                go.GetComponent<LcpManController>().activityQueue.Push(LcpManController.Activities.BuildFire);
+            }
+
+            if (input.Contains("dressed") || input.Contains("clothes") || input.Contains("shirt"))
+            {
+                go.GetComponent<LcpManController>().activityQueue.Push(LcpManController.Activities.Closet);
+            }
+
+            if (input.Contains("shower") || input.Contains("bath"))
+            {
+                go.GetComponent<LcpManController>().activityQueue.Push(LcpManController.Activities.Shower);
+            }
+
+            if (input.Contains("leave") || input.Contains("bye"))
+            {
+                go.GetComponent<LcpManController>().activityQueue.Push(LcpManController.Activities.LeaveHouse);
+            }
+
+            if (input.Contains("exercise"))
+            {
+                go.GetComponent<LcpManController>().activityQueue.Push(LcpManController.Activities.Exercise);
+            }
+
+            if (input.Contains("dishes"))
+            {
+                go.GetComponent<LcpManController>().activityQueue.Push(LcpManController.Activities.WashDishes);
+            }
+
+        }
+
+        if (input == "help")
+        {
+            TextLines[0].text = "Try saying 'please' before a command!";
+            TextLines[1].text = "CTRL-A = alarm clock, wake up";
+            TextLines[2].text = "CTRL-C = call";
+        }
     }
 }

@@ -36,7 +36,8 @@ public class LcpManController : MonoBehaviour {
         Phone,
         Attic,
         Closet,
-        Refrigerator
+        Refrigerator,
+        WashDishes
     }
     public enum CharacterStates
     {
@@ -108,62 +109,7 @@ public class LcpManController : MonoBehaviour {
 
     private void HandleInput()
     {
-        if (Input.GetKeyDown("v"))
-        {
-            activityQueue.Push(Activities.TVChair);
-        }
-
-        if (Input.GetKeyDown("s"))
-        {
-            activityQueue.Push(Activities.Sleep);
-        }
-
-        if (Input.GetKeyDown("t"))
-        {
-            activityQueue.Push(Activities.Toilet);
-        }
-
-        if (Input.GetKeyDown("b"))
-        {
-            activityQueue.Push(Activities.ReadBook);
-        }
-        if (Input.GetKeyDown("w"))
-        {
-            activityQueue.Push(Activities.Typewriter);
-        }
-
-        if (Input.GetKeyDown("e"))
-        {
-            activityQueue.Push(Activities.Exercise);
-        }
-
-        if (Input.GetKeyDown("f"))
-        {
-            activityQueue.Push(Activities.Cupboard);
-        }
-
-        if (Input.GetKeyDown("l"))
-        {
-            activityQueue.Push(Activities.LeaveHouse);
-        }
-
-        if (Input.GetKeyDown("z"))
-        {
-            activityQueue.Push(Activities.Attic);
-        }
-        if (Input.GetKeyDown("x"))
-        {
-            activityQueue.Push(Activities.Closet);
-        }
-        if (Input.GetKeyDown("r"))
-        {
-            activityQueue.Push(Activities.Sofa);
-        }
-
-
-
-
-        if (Input.GetKeyDown("a"))
+        if (isControlKeyPressed() && Input.GetKeyDown(KeyCode.A))
         {
             GameObject.Find("Alarm_clock").GetComponent<AudioSource>().Play();
             if (currentActivity == Activities.Sleep)
@@ -173,16 +119,22 @@ public class LcpManController : MonoBehaviour {
             }
         }
 
-        if (Input.GetKeyDown("c"))
+        if (isControlKeyPressed() && Input.GetKeyDown(KeyCode.C))
         {
             GameObject.Find("Phone_Base").GetComponent<PhoneController>().state = PhoneController.States.ringing;
             activityQueue.Push(Activities.Phone);
+            FinishedActivity(currentActivity);
         }
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             Application.Quit();
         }
+    }
+
+    private bool isControlKeyPressed()
+    {
+        return Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
     }
 
     void GoToActivity(Activities activity)
@@ -258,6 +210,9 @@ public class LcpManController : MonoBehaviour {
 
         if (activity == Activities.Refrigerator)
             StartWalk(1, new Vector3(7.11f, 2.1f, 1.95f), Path.FacingDirection.backward, 3);
+
+        if (activity == Activities.WashDishes)
+            StartWalk(1, new Vector3(5.22f, 2.1f, 1.63f), Path.FacingDirection.backward, 5);
     }
 
     void StartActivity(Activities activity)
@@ -275,7 +230,7 @@ public class LcpManController : MonoBehaviour {
             PlaySound("speak1", true);
         }
 
-        if (currentActivity == Activities.BathroomSink)
+        if (currentActivity == Activities.BathroomSink || currentActivity == Activities.WashDishes)
         {
             PlaySound("sink", true);
         }
@@ -301,7 +256,15 @@ public class LcpManController : MonoBehaviour {
             if (GameObject.Find("Book").GetComponent<MeshRenderer>().enabled == true)
                 characterModel.GetComponent<Animator>().SetBool("isReading", true);
             else
-                characterModel.GetComponent<Animator>().SetBool("isSitting", true);
+            {
+                int r = UnityEngine.Random.Range(1, 3);
+
+                if (r == 1)
+                    characterModel.GetComponent<Animator>().SetBool("isSitting", true);
+                else
+                    characterModel.GetComponent<Animator>().SetBool("isRelaxing", true);
+            }
+                
         }
 
         if (currentActivity == Activities.Phone)
@@ -325,7 +288,8 @@ public class LcpManController : MonoBehaviour {
         }
 
         if (currentActivity == Activities.Cupboard || currentActivity == Activities.ComputerDesk 
-            || currentActivity == Activities.Typewriter || currentActivity == Activities.BathroomSink || currentActivity == Activities.Piano)
+            || currentActivity == Activities.Typewriter || currentActivity == Activities.BathroomSink 
+            || currentActivity == Activities.Piano || currentActivity == Activities.WashDishes)
         {
             characterModel.GetComponent<Animator>().SetBool("isDoing", true);
         }
@@ -574,6 +538,7 @@ public class LcpManController : MonoBehaviour {
         characterModel.GetComponent<Animator>().SetBool("isEating", false);
         characterModel.GetComponent<Animator>().SetBool("isExercising", false);
         characterModel.GetComponent<Animator>().SetBool("isReading", false);
+        characterModel.GetComponent<Animator>().SetBool("isRelaxing", false);
 
         GameObject.Find("Shower").GetComponent<ParticleSystem>().Stop();
         GetComponent<AudioSource>().Stop();
@@ -593,7 +558,7 @@ public class LcpManController : MonoBehaviour {
             return Activities.Sleep;
         }
 
-        int nextActivity = UnityEngine.Random.Range(1, 24);
+        int nextActivity = UnityEngine.Random.Range(1, 25);
 
         switch (nextActivity)
         {
@@ -620,6 +585,7 @@ public class LcpManController : MonoBehaviour {
             case 21: return Activities.Phone;
             case 22: return Activities.Attic;
             case 23: return Activities.Closet;
+            case 24: return Activities.WashDishes;
         }
 
         return Activities.FrontDoor;
