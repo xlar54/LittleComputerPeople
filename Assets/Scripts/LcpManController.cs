@@ -37,7 +37,8 @@ public class LcpManController : MonoBehaviour {
         Attic,
         Closet,
         Refrigerator,
-        WashDishes
+        WashDishes,
+        BrushTeeth
     }
     public enum CharacterStates
     {
@@ -142,8 +143,8 @@ public class LcpManController : MonoBehaviour {
         if (activity == Activities.TV)
             StartWalk(3, new Vector3(6.67f, 8.7f, 2.41f), Path.FacingDirection.right, 1);
 
-        if (activity == Activities.BathroomSink)
-            StartWalk(2, new Vector3(0.65f, 5.55f, 2.41f), Path.FacingDirection.backward, 4);
+        if (activity == Activities.BathroomSink || activity == Activities.BrushTeeth)
+            StartWalk(2, new Vector3(0.65f, 5.55f, 2.41f), Path.FacingDirection.backward, 6);
 
         if (activity == Activities.Stove)
             StartWalk(1, new Vector3(8.05f, 2.12f, 2.41f), Path.FacingDirection.right, 4);
@@ -233,6 +234,12 @@ public class LcpManController : MonoBehaviour {
         if (currentActivity == Activities.BathroomSink || currentActivity == Activities.WashDishes)
         {
             PlaySound("sink", true);
+        }
+
+        if (currentActivity == Activities.BrushTeeth)
+        {
+            PlaySound("brushing-teeth", true);
+            characterModel.GetComponent<Animator>().SetBool("isBrushingTeeth", true);
         }
 
         if (currentActivity == Activities.ComputerDesk)
@@ -539,6 +546,7 @@ public class LcpManController : MonoBehaviour {
         characterModel.GetComponent<Animator>().SetBool("isExercising", false);
         characterModel.GetComponent<Animator>().SetBool("isReading", false);
         characterModel.GetComponent<Animator>().SetBool("isRelaxing", false);
+        characterModel.GetComponent<Animator>().SetBool("isBrushingTeeth", false);
 
         GameObject.Find("Shower").GetComponent<ParticleSystem>().Stop();
         GetComponent<AudioSource>().Stop();
@@ -558,7 +566,7 @@ public class LcpManController : MonoBehaviour {
             return Activities.Sleep;
         }
 
-        int nextActivity = UnityEngine.Random.Range(1, 25);
+        int nextActivity = UnityEngine.Random.Range(1, 26);
 
         switch (nextActivity)
         {
@@ -586,6 +594,7 @@ public class LcpManController : MonoBehaviour {
             case 22: return Activities.Attic;
             case 23: return Activities.Closet;
             case 24: return Activities.WashDishes;
+            case 25: return Activities.BrushTeeth;
         }
 
         return Activities.FrontDoor;

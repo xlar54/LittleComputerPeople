@@ -264,6 +264,11 @@ public class TypewriterController : MonoBehaviour {
                 go.GetComponent<LcpManController>().activityQueue.Push(LcpManController.Activities.WashDishes);
             }
 
+            if (input.Contains("teeth"))
+            {
+                go.GetComponent<LcpManController>().activityQueue.Push(LcpManController.Activities.BrushTeeth);
+            }
+
         }
 
         if (input == "help")
